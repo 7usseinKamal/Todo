@@ -11,8 +11,14 @@ class Todo {
   // method to check if "tasksContent" is empty to show no tasks message
   checkContent() {
     if (this.tasksContent.childElementCount === 0) {
-      this.tasksContent.innerHTML = `<span class="no-tasks-message">No Tasks To Show</span>`;
+      this.noMessageTemplate();
     }
+  }
+
+  noMessageTemplate() {
+    const noMessageTemplateElm = document.getElementById("no-task");
+    const noMessageBody = document.importNode(noMessageTemplateElm.content, true);
+    this.tasksContent.append(noMessageBody);
   }
 
   renderToTheDOM() {
@@ -101,7 +107,7 @@ class Todo {
     this.isCompletedTasks(id);
     // to show no tasks message
     if (this.tasksContent.childElementCount <= 1) {
-      this.tasksContent.innerHTML = `<span class="no-tasks-message">No Tasks To Show</span>`;
+      this.noMessageTemplate();
     }
   }
 
@@ -114,7 +120,7 @@ class Todo {
     localStorage.setItem("todoList", JSON.stringify(this.todoList));
     this.tasksLength();
     // this.isCompletedTasks(id);
-    this.tasksContent.innerHTML = `<span class="no-tasks-message">No Tasks To Show</span>`;
+    this.noMessageTemplate();
     this.completedTasks.innerHTML = 0;
   }
 }
