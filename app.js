@@ -17,7 +17,10 @@ class Todo {
 
   noMessageTemplate() {
     const noMessageTemplateElm = document.getElementById("no-task");
-    const noMessageBody = document.importNode(noMessageTemplateElm.content, true);
+    const noMessageBody = document.importNode(
+      noMessageTemplateElm.content,
+      true
+    );
     this.tasksContent.append(noMessageBody);
   }
 
@@ -39,13 +42,7 @@ class Todo {
 
   // method to get data from localStorage if it found
   isInLocalStorage() {
-    let storageData;
-    if (localStorage.getItem("todoList")) {
-      storageData = JSON.parse(localStorage.getItem("todoList"));
-    } else {
-      storageData = [];
-    }
-    this.todoList = storageData;
+    this.todoList = Storage.getItem();
     this.tasksContent.innerHTML = this.renderToTheDOM();
   }
 
@@ -68,8 +65,8 @@ class Todo {
       data.isCompelted = false;
       // push to array
       this.todoList.push(data);
-      // pu to localStorage
-      localStorage.setItem("todoList", JSON.stringify(this.todoList));
+      // put to localStorage
+      Storage.setItem(this.todoList);
       this.tasksContent.innerHTML = this.renderToTheDOM();
       this.tasksLength();
       this.input.value = "";
@@ -94,7 +91,7 @@ class Todo {
       (list) => list.isCompelted === true
     );
     // to localStorage
-    localStorage.setItem("todoList", JSON.stringify(this.todoList));
+    Storage.setItem(this.todoList);
     this.completedTasks.innerHTML = completedArr.length;
   }
 
@@ -102,7 +99,7 @@ class Todo {
   removeTodoList(id) {
     const remainingArr = this.todoList.filter((list) => list.id !== id);
     this.todoList = remainingArr;
-    localStorage.setItem("todoList", JSON.stringify(remainingArr));
+    Storage.setItem(remainingArr);
     this.tasksLength();
     this.isCompletedTasks(id);
     // to show no tasks message
@@ -117,10 +114,10 @@ class Todo {
       return;
     }
     this.todoList = [];
-    localStorage.setItem("todoList", JSON.stringify(this.todoList));
+    Storage.clearItems();
     this.tasksLength();
     // this.isCompletedTasks(id);
-    this.noMessageTemplate();
+    this.tasksContent.innerHTML = `<span class="no-tasks-message">No Tasks To Show</span>`;
     this.completedTasks.innerHTML = 0;
   }
 }
@@ -158,3 +155,22 @@ document.addEventListener("DOMContentLoaded", () => {
   todo.completedTasks.innerHTML = completedArr.length;
   todo.checkContent();
 });
+
+// class to storage data in localStorage
+class Storage {
+  static getItem() {
+    let storageData;
+    if (localStorage.getItem("todoList")) {
+      storageData = JSON.parse(localStorage.getItem("todoList"));
+    } else {
+      storageData = [];
+    }
+    return storageData;
+  }
+  static setItem(data) {
+    localStorage.setItem("todoList", JSON.stringify(data));
+  }
+  static clearItems() {
+    localStorage.removeItem("todoList");
+  }
+}
