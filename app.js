@@ -1,4 +1,3 @@
-// ES7 OOP
 class Todo {
   input = document.querySelector("input");
   add = document.querySelector(".plus");
@@ -7,6 +6,39 @@ class Todo {
   completedTasks = document.querySelector(".completed-tasks span");
   reset = document.getElementById("btn");
   todoList = [];
+
+  constructor() {
+    this.addTodo();
+    this.restTodo();
+    this.documentEvents();
+  }
+
+  // add tasks
+  addTodo() {
+    this.add.addEventListener("click", () => {
+      this.getTodo();
+    });
+  }
+
+  // clear tasks
+  restTodo() {
+    this.reset.addEventListener("click", () => {
+      this.clearList();
+    });
+  }
+
+  // finished or remove task events
+  documentEvents() {
+    document.addEventListener("click", (e) => {
+      if (e.target.classList.contains("headThree")) {
+        e.target.classList.toggle("finished");
+        todo.isCompletedTasks(e.target.parentElement.id);
+      } else if (e.target.classList.contains("fa-trash-alt")) {
+        todo.removeTodoList(e.target.parentElement.parentElement.id);
+        e.target.parentElement.parentElement.remove();
+      }
+    });
+  }
 
   // method to check if "tasksContent" is empty to show no tasks message
   checkContent() {
@@ -116,45 +148,14 @@ class Todo {
     this.todoList = [];
     Storage.clearItems();
     this.tasksLength();
-    // this.isCompletedTasks(id);
-    this.tasksContent.innerHTML = `<span class="no-tasks-message">No Tasks To Show</span>`;
-    this.completedTasks.innerHTML = 0;
+    this.isCompletedTasks();
+    this.tasksContent.innerHTML = "";
+    this.noMessageTemplate();
   }
 }
 
 // execute class
 const todo = new Todo();
-
-todo.add.addEventListener("click", () => {
-  todo.getTodo();
-});
-
-// event to put tasks finished or remove task
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("headThree")) {
-    e.target.classList.toggle("finished");
-    todo.isCompletedTasks(e.target.parentElement.id);
-  } else if (e.target.classList.contains("fa-trash-alt")) {
-    todo.removeTodoList(e.target.parentElement.parentElement.id);
-    e.target.parentElement.parentElement.remove();
-  }
-});
-
-// event to clear tasks
-todo.reset.addEventListener("click", () => {
-  todo.clearList();
-});
-
-// event to execute first on reload
-document.addEventListener("DOMContentLoaded", () => {
-  todo.isInLocalStorage();
-  todo.tasksLength();
-  const completedArr = todo.todoList.filter(
-    (list) => list.isCompelted === true
-  );
-  todo.completedTasks.innerHTML = completedArr.length;
-  todo.checkContent();
-});
 
 // class to storage data in localStorage
 class Storage {
@@ -174,3 +175,12 @@ class Storage {
     localStorage.removeItem("todoList");
   }
 }
+
+// event to execute first on reload
+document.addEventListener("DOMContentLoaded", () => {
+  todo.isInLocalStorage();
+  todo.tasksLength();
+  todo.isCompletedTasks();
+  todo.checkContent();
+});
+
